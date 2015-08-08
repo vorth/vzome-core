@@ -202,6 +202,14 @@ compileJava {
     source antlr4.destinationDir
 }
 
+
+task prepareJythonPath( type: Copy ) {
+    into "$buildDir/output/jythonPath"
+    from configurations.runtime
+}
+build.dependsOn( prepareJythonPath )
+
+
 task cleanAntlr {
 	doLast() {
 		// Be sure to wrap this inside doLast(). 
