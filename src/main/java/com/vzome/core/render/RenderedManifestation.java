@@ -39,10 +39,12 @@ public class RenderedManifestation
     private AlgebraicNumber strutLength = null;
 
 	private Direction strutOrbit = null;
+
+	private OrbitSource orbitSource;
     
 //    private transient Axis mAxis = null;
 
-    public RenderedManifestation( Manifestation m )
+	public RenderedManifestation( Manifestation m )
     {
         mManifestation = m;
         if ( m != null )
@@ -249,5 +251,15 @@ public class RenderedManifestation
 	public Direction getStrutOrbit()
 	{
 		return this .strutOrbit;
+	}
+
+	public void setOrbitSource( OrbitSource orbitSource )
+	{
+		this.orbitSource = orbitSource;		
+	}
+
+    public OrbitSource getOrbitSource()
+    {
+		return this .orbitSource;
 	}
 }

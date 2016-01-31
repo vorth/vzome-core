@@ -26,7 +26,7 @@ import com.vzome.core.math.symmetry.OrbitSet;
 import com.vzome.core.math.symmetry.Symmetry;
 import com.vzome.core.render.Color;
 import com.vzome.core.render.Colors;
-import com.vzome.core.render.RenderedModel.OrbitSource;
+import com.vzome.core.render.OrbitSource;
 import com.vzome.core.render.Shapes;
 
 public class SymmetrySystem implements OrbitSource

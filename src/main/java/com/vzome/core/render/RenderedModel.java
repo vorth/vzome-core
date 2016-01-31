@@ -45,19 +45,6 @@ public class RenderedModel implements ManifestationChanges, Iterable<RenderedMan
     
     static Logger logger = Logger.getLogger( "com.vzome.core.render.RenderedModel" );
 
-    public interface OrbitSource
-    {
-    	Symmetry getSymmetry();
-    	    	
-        Axis getAxis( AlgebraicVector vector );
-        
-        Color getColor( Direction orbit );
-
-		OrbitSet getOrbits();
-		
-		Shapes getShapes();
-    }
-        
     public RenderedModel( final AlgebraicField field, final OrbitSource orbitSource )
     {
         super();
@@ -329,6 +316,7 @@ public class RenderedModel implements ManifestationChanges, Iterable<RenderedMan
 	{
         Color oldColor = rm .getColor();
 	    Manifestation m = rm .getManifestation();
+	    rm .setOrbitSource( this. orbitSource );
         if ( m instanceof Connector ) {
             resetAttributes( rm, justShape, (Connector) m );
         }

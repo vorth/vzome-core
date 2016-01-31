@@ -69,8 +69,8 @@ import com.vzome.core.model.Strut;
 import com.vzome.core.model.VefModelExporter;
 import com.vzome.core.render.Color;
 import com.vzome.core.render.Colors;
+import com.vzome.core.render.OrbitSource;
 import com.vzome.core.render.RenderedModel;
-import com.vzome.core.render.RenderedModel.OrbitSource;
 import com.vzome.core.viewing.Lights;
 import com.vzome.core.viewing.Camera;
 
