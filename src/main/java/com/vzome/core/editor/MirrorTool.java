@@ -25,9 +25,9 @@ import com.vzome.core.model.Strut;
 
 public class MirrorTool extends TransformationTool
 {
-    public MirrorTool( String name, Selection selection, RealizedModel realized, Tool.Registry tools, Point originPoint )
+    public MirrorTool( String name, Selection selection, RealizedModel realized, Point originPoint )
     {
-        super( name, selection, realized, tools, originPoint );
+        super( name, selection, realized, originPoint );
     }
 
     public void perform() throws Command.Failure
@@ -85,8 +85,6 @@ public class MirrorTool extends TransformationTool
     
         this .transforms = new Transformation[ 1 ];
         transforms[ 0 ] = new PlaneReflection( mirrorPlane );
-    
-        defineTool();
     }
 
     protected String getXmlElementName()

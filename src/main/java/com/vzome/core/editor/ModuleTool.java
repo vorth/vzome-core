@@ -22,13 +22,10 @@ public class ModuleTool extends ChangeManifestations implements Tool
     
     private final List<Manifestation> bookmarkedSelection = new ArrayList<>();
         
-    private Tool.Registry tools;
-
-    public ModuleTool( String name, Selection selection, RealizedModel realized, Tool.Registry tools )
+    public ModuleTool( String name, Selection selection, RealizedModel realized )
     {
         super( selection, realized, false );
         this.name = name;
-        this.tools = tools;
         mSelection .copy( bookmarkedSelection );
     }
 
@@ -39,12 +36,7 @@ public class ModuleTool extends ChangeManifestations implements Tool
 
     public void perform() throws Failure
     {
-        defineTool();
-    }
-
-    protected void defineTool()
-    {
-        tools .addTool( this );
+        // not undoable
     }
 
     public void prepare( ChangeManifestations applyTool ) {}

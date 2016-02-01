@@ -19,8 +19,6 @@ public class ApplyTool extends ChangeManifestations
 {
     public void perform() throws Failure
     {
-        registry .useTool( tool );
-        
         // first, handle the inputs, offering each to the tool (if it needs input).
         //  If the tool does not need input, it operates just on its parameters and
         //  the entire realized model, but it still may add to or replace the current
@@ -65,27 +63,27 @@ public class ApplyTool extends ChangeManifestations
     }
 
     private Tool tool;
-    
-    private Tool.Registry registry;
-    
+        
     private boolean selectInputs, deselectOutputs, justSelect, hideInputs, redundantOutputs;
+
+	private final Tools tools;
 
 //    public ApplyTool( Selection selection, RealizedModel realized, ToolEvent event )
 //    {
 //    	this( selection, realized, event .getTool(), event .getRegistry(), event .getModes(), true );
 //    }
     
-    public ApplyTool( Selection selection, RealizedModel realized, Tool.Registry registry, boolean redundantOutputs )
+    public ApplyTool( Tools tools, Selection selection, RealizedModel realized, boolean redundantOutputs )
     {
-        this( selection, realized, null, registry, 0, redundantOutputs );
+        this( tools, selection, realized, null, 0, redundantOutputs );
     }
     
-    public ApplyTool( Selection selection, RealizedModel realized, Tool tool, Tool.Registry registry, int modes, boolean redundantOutputs )
+    public ApplyTool( Tools tools, Selection selection, RealizedModel realized, Tool tool, int modes, boolean redundantOutputs )
     {
         super( selection, realized, false );
+		this.tools = tools;
         
         this.tool = tool;
-        this.registry = registry;
         selectInputs = ( modes & ActionEvent.SHIFT_MASK ) != 0;
         deselectOutputs = ( modes & ActionEvent.ALT_MASK ) != 0;
         justSelect = ( modes & ActionEvent.META_MASK ) != 0;
@@ -117,7 +115,7 @@ public class ApplyTool extends ChangeManifestations
     protected void setXmlAttributes( Element element, XmlSaveFormat format ) throws Failure
     {
         String toolName = element .getAttribute( "name" );
-        this .tool = registry .getTool( toolName );
+        this .tool = tools .get( toolName );
         this .selectInputs = isAttributeTrue( element, "selectInputs" );
         this .deselectOutputs = isAttributeTrue( element, "deselectOutputs" );
         this .justSelect = isAttributeTrue( element, "justSelect" );

@@ -27,8 +27,6 @@ public class PlaneSelectionTool extends ChangeSelection implements Tool
     private Bivector3d plane;
     
     private AlgebraicVector anchor;
-        
-    private Tool.Registry tools;
 
 	private boolean halfSpace = false;
 	private boolean boundaryOpen = false;
@@ -38,11 +36,10 @@ public class PlaneSelectionTool extends ChangeSelection implements Tool
 	private boolean includePanels = true;
 	private boolean includePartials = false;
 
-    public PlaneSelectionTool( String name, Selection selection, AlgebraicField field, Tool.Registry tools )
+    public PlaneSelectionTool( String name, Selection selection, AlgebraicField field )
     {
         super( selection, false );
         this .name = name;
-        this .tools = tools;
     }
 
 	public boolean isSticky()
@@ -86,13 +83,6 @@ public class PlaneSelectionTool extends ChangeSelection implements Tool
         Vector3d v2 = new Vector3d( p3 .minus( p1 ) );
         plane = v1 .outer( v2 );
         anchor = p1;
-
-        defineTool();
-    }
-
-    protected void defineTool()
-    {
-        tools .addTool( this );
     }
 
     public void prepare( ChangeManifestations applyTool ) {}

@@ -18,9 +18,9 @@ import com.vzome.core.model.RealizedModel;
 
 public class TranslationTool extends TransformationTool
 {
-    public TranslationTool( String name, Selection selection, RealizedModel realized, Tool.Registry tools, Point originPoint )
+    public TranslationTool( String name, Selection selection, RealizedModel realized, Point originPoint )
     {
-        super( name, selection, realized, tools, originPoint );
+        super( name, selection, realized, originPoint );
     }
     
     public String getDefaultName( String baseName )
@@ -77,8 +77,6 @@ public class TranslationTool extends TransformationTool
 
         this .transforms = new Transformation[ 1 ];
         transforms[ 0 ] = new PointToPointTranslation( p1, p2 );
-
-        defineTool();
     }
 
     protected String getXmlElementName()

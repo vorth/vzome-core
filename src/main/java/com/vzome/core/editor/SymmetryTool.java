@@ -24,9 +24,9 @@ public class SymmetryTool extends TransformationTool
 {
     protected Symmetry symmetry;
     
-    public SymmetryTool( String name, Symmetry symmetry, Selection selection, RealizedModel realized, Tool.Registry tools, Point originPoint )
+    public SymmetryTool( String name, Symmetry symmetry, Selection selection, RealizedModel realized, Point originPoint )
     {
-        super( name, selection, realized, tools, originPoint );
+        super( name, selection, realized, originPoint );
         this.symmetry = symmetry;
     }
     
@@ -95,8 +95,6 @@ public class SymmetryTool extends TransformationTool
             for ( int i = 0; i < order-1; i++ )
                 transforms[ i ] = new SymmetryTransformation( symmetry, i+1, center );
         }
-    
-        defineTool();
     }
 
     protected String getXmlElementName()

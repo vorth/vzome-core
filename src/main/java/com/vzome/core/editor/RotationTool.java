@@ -33,9 +33,9 @@ public class RotationTool extends SymmetryTool
         return "rotation";
     }
 
-    public RotationTool( String name, Symmetry symmetry, Selection selection, RealizedModel realized, Tool.Registry tools, Point originPoint )
+    public RotationTool( String name, Symmetry symmetry, Selection selection, RealizedModel realized, Point originPoint )
     {
-        super( name, symmetry, selection, realized, tools, originPoint );
+        super( name, symmetry, selection, realized, originPoint );
     }
 
     public void perform() throws Command.Failure
@@ -94,8 +94,6 @@ public class RotationTool extends SymmetryTool
             throw new Command.Failure( "selected strut is not an axis of rotation" );
         this .transforms = new Transformation[ 1 ];
         transforms[ 0 ] = new SymmetryTransformation( symmetry, rotation, center );
-
-        defineTool();
     }
 
     protected String getXmlElementName()

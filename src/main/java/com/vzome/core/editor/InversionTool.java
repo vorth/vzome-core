@@ -14,9 +14,9 @@ import com.vzome.core.model.RealizedModel;
 
 public class InversionTool extends TransformationTool
 {
-    public InversionTool( String name, Selection selection, RealizedModel realized, Tool.Registry tools, Point originPoint )
+    public InversionTool( String name, Selection selection, RealizedModel realized, Point originPoint )
     {
-        super( name, selection, realized, tools, originPoint );
+        super( name, selection, realized, originPoint );
     }
 
     public void perform() throws Command.Failure
@@ -38,8 +38,6 @@ public class InversionTool extends TransformationTool
     
         this .transforms = new Transformation[ 1 ];
         transforms[ 0 ] = new PointReflection( center );
-
-        defineTool();
     }
 
     protected String getXmlElementName()
