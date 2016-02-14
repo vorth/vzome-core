@@ -19,14 +19,11 @@ public class BookmarkTool extends ChangeManifestations implements Tool
     private String name;
     
     private final List<Construction> bookmarkedConstructions = new ArrayList<>();
-        
-    private Tool.Registry tools;
-    
-    public BookmarkTool( String name, Selection selection, RealizedModel realized, Tool.Registry tools )
+            
+    public BookmarkTool( String name, Selection selection, RealizedModel realized )
     {
         super( selection, realized, false );
         this.name = name;
-        this.tools = tools;
         Duplicator duper = new Duplicator( null, null );
         for (Manifestation man : mSelection) {
             Construction result = duper .duplicateConstruction( man );
@@ -41,12 +38,7 @@ public class BookmarkTool extends ChangeManifestations implements Tool
 
     public void perform() throws Failure
     {
-        defineTool();
-    }
-
-    protected void defineTool()
-    {
-        tools .addTool( this );
+    	// not undoable
     }
 
     public boolean needsInput()

@@ -69,12 +69,12 @@ import com.vzome.core.model.Strut;
 import com.vzome.core.model.VefModelExporter;
 import com.vzome.core.render.Color;
 import com.vzome.core.render.Colors;
+import com.vzome.core.render.OrbitSource;
 import com.vzome.core.render.RenderedModel;
-import com.vzome.core.render.RenderedModel.OrbitSource;
 import com.vzome.core.viewing.Lights;
 import com.vzome.core.viewing.Camera;
 
-public class DocumentModel implements Snapshot .Recorder, UndoableEdit .Context, Tool .Registry
+public class DocumentModel implements Snapshot .Recorder, UndoableEdit .Context
 {
 	private final ModelRoot mDerivationModel;
 
@@ -94,7 +94,7 @@ public class DocumentModel implements Snapshot .Recorder, UndoableEdit .Context,
     
 	private final AlgebraicField mField;
 	
-	private final Map<String, Tool> tools = new HashMap<>();
+	private final Tools tools;
 	
 	private Command.FailureChannel failures;
 
@@ -240,6 +240,9 @@ public class DocumentModel implements Snapshot .Recorder, UndoableEdit .Context,
 				}
 			}
 		} );
+        
+        // TODO encapsulate the editing model better, here... should be one argument
+        this .tools = new Tools( this, this .mSelection, this .mRealizedModel, this .originPoint, this .mField );
 	}
 		
 	public int getChangeCount()
@@ -374,45 +377,6 @@ public class DocumentModel implements Snapshot .Recorder, UndoableEdit .Context,
 		else if ( "RunPythonScript".equals( name ) )
 			edit = new RunPythonScript( this.mSelection, this.mRealizedModel, null, mEditorModel.getCenterPoint(), this .mDerivationModel );
 
-		else if ( "BookmarkTool".equals( name ) )
-			edit = new BookmarkTool( name, this.mSelection, this.mRealizedModel, this );
-
-		else if ( "ModuleTool" .equals( name ) )
-			edit = new ModuleTool( null, mSelection, mRealizedModel, this );
-
-		else if ( "PlaneSelectionTool" .equals( name ) )
-			edit = new PlaneSelectionTool( null, mSelection, mField, this );
-
-		else if ( "SymmetryTool".equals( name ) )
-			edit = new SymmetryTool( null, null, this.mSelection, this.mRealizedModel, this, this.originPoint );
-
-		else if ( "ScalingTool".equals( name ) )
-			edit = new ScalingTool( name, null, this.mSelection, this.mRealizedModel, this, this.originPoint );
-
-		else if ( "RotationTool".equals( name ) )
-			edit = new RotationTool( name, null, this.mSelection, this.mRealizedModel, this, this.originPoint );
-
-		else if ( "InversionTool".equals( name ) )
-			edit = new InversionTool( name, this.mSelection, this.mRealizedModel, this, this.originPoint );
-
-		else if ( "MirrorTool".equals( name ) )
-			edit = new MirrorTool( name, this.mSelection, this.mRealizedModel, this, this.originPoint );
-
-		else if ( "TranslationTool".equals( name ) )
-			edit = new TranslationTool( name, this.mSelection, this.mRealizedModel, this, this.originPoint );
-
-		else if ( "LinearMapTool".equals( name ) )
-			edit = new LinearMapTool( name, this.mSelection, this.mRealizedModel, this, this.originPoint, true );
-
-		else if ( "LinearTransformTool".equals( name ) )
-			edit = new LinearMapTool( name, this.mSelection, this.mRealizedModel, this, this.originPoint, false );
-
-		else if ( "ToolApplied".equals( name ) )
-			edit = new ApplyTool( this.mSelection, this.mRealizedModel, this, false );
-
-		else if ( "ApplyTool".equals( name ) )
-			edit = new ApplyTool( this.mSelection, this.mRealizedModel, this, true );
-
         else if ( RealizeMetaParts.NAME .equals( name ) )
             edit = new RealizeMetaParts( mSelection, mRealizedModel, mDerivationModel );
 
@@ -422,6 +386,10 @@ public class DocumentModel implements Snapshot .Recorder, UndoableEdit .Context,
 		else if ( "Symmetry4d".equals( name ) ) {
             QuaternionicSymmetry h4symm = this .mField .getQuaternionSymmetry( "H_4" ); 
 			edit = new Symmetry4d( this.mSelection, this.mRealizedModel, h4symm, h4symm );
+		}
+		
+		if ( edit == null ) {
+			edit = this .tools .createEdit( xml );
 		}
 
 		if ( edit == null )
@@ -448,12 +416,6 @@ public class DocumentModel implements Snapshot .Recorder, UndoableEdit .Context,
         performAndRecord( edit );
 	}
 
-	public void applyTool( Tool tool, Tool.Registry registry, int modes )
-	{
-		UndoableEdit edit = new ApplyTool( this.mSelection, this.mRealizedModel, tool, registry, modes, true );
-        performAndRecord( edit );
-	}
-	
 	public void applyQuaternionSymmetry( QuaternionicSymmetry left, QuaternionicSymmetry right )
 	{
 		UndoableEdit edit = new Symmetry4d( this.mSelection, this.mRealizedModel, left, right );
@@ -858,25 +820,6 @@ public class DocumentModel implements Snapshot .Recorder, UndoableEdit .Context,
     	}
     }
 
-    public void addTool( Tool tool )
-    {
-    	String name = tool .getName();
-    	tools .put( name, tool );
-    }
-
-    public void removeTool( Tool tool )
-    {
-    	String name = tool .getName();
-    	tools .remove( name );
-    }
-
-    public Tool getTool( String toolName )
-    {
-    	return tools .get( toolName );
-    }
-
-    public void useTool( Tool tool ) {}
-
     public AlgebraicField getField()
     {
     	return this .mField;
@@ -1004,45 +947,6 @@ public class DocumentModel implements Snapshot .Recorder, UndoableEdit .Context,
         this .performAndRecord( edit );
     }
 
-	public void createTool( String name, String group, Tool.Registry tools, Symmetry symmetry )
-	{
-        Selection toolSelection = mSelection;
-
-        if ( "default" .equals( group ) )
-        {
-            name = name .substring( "default." .length() );
-            int nextDot = name .indexOf( "." );
-            group = name .substring( 0, nextDot );
-            toolSelection = new Selection();
-        }
-        
-        UndoableEdit edit = null;
-        if ( "bookmark" .equals( group ) )
-            edit = new BookmarkTool( name, toolSelection, mRealizedModel, tools );
-        else if ( "point reflection" .equals( group ) )
-            edit = new InversionTool( name, toolSelection, mRealizedModel, tools, originPoint );
-        else if ( "mirror" .equals( group ) )
-            edit = new MirrorTool( name, toolSelection, mRealizedModel, tools, originPoint );
-        else if ( "translation" .equals( group ) )
-            edit = new TranslationTool( name, toolSelection, mRealizedModel, tools, originPoint );
-        else if ( "linear map" .equals( group ) )
-            edit = new LinearMapTool( name, toolSelection, mRealizedModel, tools, originPoint, false );
-        else if ( "rotation" .equals( group ) )
-            edit = new RotationTool( name, symmetry, mSelection, mRealizedModel, tools, originPoint );
-        else if ( "scaling" .equals( group ) )
-        	edit = new ScalingTool( name, symmetry, mSelection, mRealizedModel, tools, originPoint );
-        else if ( "tetrahedral" .equals( group ) )
-            edit = new SymmetryTool( name, symmetry, mSelection, mRealizedModel, tools, originPoint );
-        else if ( "module" .equals( group ) )
-            edit = new ModuleTool( name, mSelection, mRealizedModel, tools );
-        else if ( "plane" .equals( group ) )
-            edit = new PlaneSelectionTool( name, mSelection, mField, tools );
-        else
-        	edit = new SymmetryTool( name, symmetry, mSelection, mRealizedModel, tools, originPoint );
-        
-        performAndRecord( edit );
-	}
-
 	public Exporter3d getNaiveExporter( String format, Camera view, Colors colors, Lights lights, RenderedModel currentSnapshot )
 	{
         if ( format.equals( "pov" ) )
@@ -1155,9 +1059,9 @@ public class DocumentModel implements Snapshot .Recorder, UndoableEdit .Context,
 		return this .mRealizedModel;
 	}
 
-    public Iterable<Tool> getTools()
+    public Tools getTools()
     {
-        return this .tools .values();
+        return this .tools;
     }
     
     public SymmetrySystem getSymmetrySystem()

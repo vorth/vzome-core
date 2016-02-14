@@ -28,9 +28,9 @@ public class ScalingTool extends SymmetryTool
         return "scaling";
     }
 
-    public ScalingTool( String name, Symmetry symmetry, Selection selection, RealizedModel realized, Tool.Registry tools, Point originPoint )
+    public ScalingTool( String name, Symmetry symmetry, Selection selection, RealizedModel realized, Point originPoint )
     {
-        super( name, symmetry, selection, realized, tools, originPoint );
+        super( name, symmetry, selection, realized, originPoint );
     }
 
     public void perform() throws Command.Failure
@@ -78,8 +78,6 @@ public class ScalingTool extends SymmetryTool
 
         this .transforms = new Transformation[ 1 ];
         transforms[ 0 ] = new Scaling( s1, s2, center, symmetry );
-
-        defineTool();
     }
 
     protected String getXmlElementName()

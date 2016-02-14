@@ -36,23 +36,16 @@ public abstract class TransformationTool extends ChangeManifestations implements
 
     public void perform() throws Failure
     {
-        defineTool();
-    }
-
-    protected void defineTool()
-    {
-        tools .addTool( this );
+        // not undoable
     }
 
     private String name;
     
     protected Transformation[] transforms;
-    
-    private Tool.Registry tools;
-    
+        
     protected Point originPoint;
 
-    public TransformationTool( String name, Selection selection, RealizedModel realized, Tool.Registry tools, Point originPoint )
+    public TransformationTool( String name, Selection selection, RealizedModel realized, Point originPoint )
     {
         super( selection, realized, false );
         
@@ -60,7 +53,6 @@ public abstract class TransformationTool extends ChangeManifestations implements
             this .name = name .replaceAll( DEFAULT_NAME_TRIGGER, getDefaultName( name ) );
         else
             this.name = name;
-        this.tools = tools;
         this.originPoint = originPoint;
     }
     

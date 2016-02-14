@@ -18,15 +18,15 @@ public class LinearMapTool extends TransformationTool
 {
     private final boolean originalScaling;
 
-    public LinearMapTool( String name, Selection selection, RealizedModel realized, Tool.Registry tools, Point originPoint )
+    public LinearMapTool( String name, Selection selection, RealizedModel realized, Point originPoint )
     {
-        this( name, selection, realized, tools, originPoint, false );
+        this( name, selection, realized, originPoint, false );
     }
 
     public LinearMapTool(
-        String name, Selection selection, RealizedModel realized, Tool.Registry tools, Point originPoint, boolean originalScaling )
+        String name, Selection selection, RealizedModel realized, Point originPoint, boolean originalScaling )
     {
-        super( name, selection, realized, tools, originPoint );
+        super( name, selection, realized, originPoint );
         this.originalScaling = originalScaling;
     }
 
@@ -79,8 +79,6 @@ public class LinearMapTool extends TransformationTool
         	transforms[ 0 ] = new ChangeOfBasis( oldBasis, newBasis, center );
         else
         	transforms[ 0 ] = new ChangeOfBasis( oldBasis[ 0 ], oldBasis[ 1 ], oldBasis[ 2 ], center, originalScaling );
-
-        defineTool();
     }
 
     protected String getXmlElementName()
