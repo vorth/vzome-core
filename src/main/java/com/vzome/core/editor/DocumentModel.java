@@ -723,6 +723,9 @@ public class DocumentModel implements Snapshot .Recorder, UndoableEdit .Context,
 		case "affineHeptagon":
 			edit = new AffineHeptagon( mSelection, mRealizedModel );
 			break;
+		case "affineHexagon":
+			edit = new AffinePolygonMesh( mSelection, mRealizedModel );
+			break;
 		case "affineTransformAll":
 			edit = new AffineTransformAll( mSelection, mRealizedModel, mEditorModel.getCenterPoint(), false );
 			break;
