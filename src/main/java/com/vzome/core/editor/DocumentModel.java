@@ -163,7 +163,8 @@ public class DocumentModel implements Snapshot .Recorder, UndoableEdit .Context,
 		this .failures = failures;
 		this .mXML = xml;
 		this .commands = app .getCommands();
-		this .sceneLighting = app .getLights();
+        Element sceneXml = ( this .mXML == null )? null : (Element) this .mXML .getElementsByTagName( "sceneModel" ) .item( 0 );
+		this .sceneLighting =new Lights( sceneXml, app .getLights() );
 		
 		this .coreVersion = app .getCoreVersion();
 
@@ -1525,6 +1526,10 @@ public class DocumentModel implements Snapshot .Recorder, UndoableEdit .Context,
 		return this .renderedModel;
 	}
 	
+	public Lights getSceneLighting() {
+		return sceneLighting;
+	}
+
 	public Camera getViewModel()
 	{
 	    return this .defaultView;

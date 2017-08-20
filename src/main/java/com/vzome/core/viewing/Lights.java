@@ -53,35 +53,43 @@ public class Lights //extends DefaultController
     
     private Color backgroundColor;
     
+    private boolean renderOutlines;
+    
 
-    public Lights()
-    {
-        super();
-    }
+    public Lights() {
+		super();
+	}
 
-
-    public Lights( Lights prototype )
+    public Lights( Element element, Lights prototype )
     {
         this();
         
         this .backgroundColor = prototype .backgroundColor;
         this .mAmbientLightColor = prototype .mAmbientLightColor;
+        this .renderOutlines = prototype .renderOutlines;
         verifyListSizesMatch();
         for ( int i = 0; i < prototype.mDirectionalLightVectors.size(); i++ ) {
             Vector3f pos = prototype.mDirectionalLightVectors.get(i);
             Color color = prototype.mDirectionalLightColors.get(i);
             addDirectionLight( color, pos );
         }
-    }
+        
+        if ( element == null )
+        	return;
 
-
-    public Lights( Element element )
-    {
-        this();
         String str = element .getAttribute( "background" );
         this .backgroundColor = Color .parseColor( str );
+
         str = element .getAttribute( "ambientLight" );
         this .mAmbientLightColor = Color .parseColor( str );
+
+        str = element .getAttribute( "renderOutlines" );
+        if ( str != null ) {
+        	// If the XML has the attribute, use it, otherwise the prototype should dictate the value.
+        	//   Older documents do not have the attribute.
+        	this .renderOutlines = Boolean .valueOf( str );
+        }
+
         NodeList nodes = element .getChildNodes();
         for ( int i = 0; i < nodes .getLength(); i++ ) {
             Node node = nodes .item( i );
@@ -99,7 +107,7 @@ public class Lights //extends DefaultController
         }
     }
 
-    public int size() {
+	public int size() {
         verifyListSizesMatch();
         return mDirectionalLightVectors.size();
     }
@@ -146,11 +154,20 @@ public class Lights //extends DefaultController
         this .backgroundColor = color;
     }
 
+    public boolean isRenderOutlines() {
+		return renderOutlines;
+	}
+
+	public void setRenderOutlines( boolean renderOutlines ) {
+		this.renderOutlines = renderOutlines;
+	}
+
     public Element getXml( Document doc )
     {
         Element result = doc .createElement( "sceneModel" );
         DomUtils .addAttribute( result, "ambientLight", mAmbientLightColor .toString() );
         DomUtils .addAttribute( result, "background", backgroundColor .toString() );
+        DomUtils .addAttribute( result, "renderOutlines", Boolean .toString( renderOutlines ) );
         verifyListSizesMatch();
         for ( int i = 0; i < mDirectionalLightVectors.size(); i++ ) {
             Vector3f pos = mDirectionalLightVectors.get(i);

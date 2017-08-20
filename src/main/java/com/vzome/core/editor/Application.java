@@ -126,6 +126,7 @@ public class Application
         }
         mLights .setAmbientColor( mColors .getColorPref( "light.ambient" ) );
         mLights .setBackgroundColor( mColors .getColor( Colors.BACKGROUND ) );
+        mLights .setRenderOutlines( "true" .equals( properties .getProperty( "outline.geometry" ) ) );
 
         AbstractShapes defaultShapes = null;
 
